@@ -1,0 +1,61 @@
+function STEP2_PACMAN_SUSPENDED_EXTRACT(){  
+  
+  //Préciser dans la feuille active le nom de la feuille et des onglets 
+  var document         = SpreadsheetApp.getActive();
+  var mysheetlist      = document.getSheetByName("DELETION PROCESSING LIST");
+  
+  //Supprimer des contenus dans le fichier
+  mysheetlist.getRange("C2:C").clear();
+  
+  //ETAPE II : Extraction progressive des noms des user et calcul des formules
+  //Préciser dans la feuille active le nom de la feuille   
+  var document       = SpreadsheetApp.getActive();
+  var sheet          = document.getSheetByName("ACCOUNTS TO STUDY");
+  
+  //Supprimer des contenus dans le fichier
+  sheet.getRange("A2:B").clear();
+  
+  var pageToken;
+  var page, dataToInsert = [];
+  do 
+    {
+    //Lister les profils du domaine
+    page = AdminDirectory.Users.list
+         (
+         {
+          //Préciser le nom du domaine 
+          domain: 'decathlon.com',
+          //Préciser l'ordre de classement des données
+          orderBy: 'givenName',
+          pageToken: pageToken
+         }
+         );
+         //Variable de la liste des comptes 
+         var users     = page.users;
+           //Variable de la liste des comptes
+           if (users) 
+            {
+            //Boucle d'écriture de la liste
+            for (var i = 0; i < users.length; i++) 
+                {
+                 var user = users[i];
+                 //Critère de recherche
+                  if (user.suspended)
+                   {
+                     // cumule dans la liste des user et de leur email principal   
+                     dataToInsert.push([user.primaryEmail,user.orgUnitPath]);
+                   } 
+                }
+            } 
+           else 
+            {
+             Browser.msgBox("Error", "Pas d'utilisateur dans le domaine !", Browser.Buttons.OK);
+             return;
+             }
+             pageToken = page.nextPageToken;
+     } 
+     while (pageToken);
+
+  // Set the results.
+  sheet.getRange(2, 1, dataToInsert.length, 2).setValues(dataToInsert);
+}
