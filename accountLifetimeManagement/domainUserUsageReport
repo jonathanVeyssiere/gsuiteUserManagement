@@ -34,7 +34,7 @@ function STEP1_PACMAN_USER_REPORT(){
     }
     pageToken = page.nextPageToken;
   } while (pageToken);
-
+ 
   if (rows.length > 0) {
     var spreadsheet       = SpreadsheetApp.getActive();
     var sheet             = spreadsheet.getSheetByName("NAME OF YOUR TAB");
