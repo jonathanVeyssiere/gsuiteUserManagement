@@ -1,48 +1,44 @@
 function STEP2_PACMAN_SUSPENDED_EXTRACT(){  
   
-  //Préciser dans la feuille active le nom de la feuille et des onglets 
+  //Name of the sheet and tab
   var document         = SpreadsheetApp.getActive();
   var mysheetlist      = document.getSheetByName("DELETION PROCESSING LIST");
   
-  //Supprimer des contenus dans le fichier
+  //Delete content on sheet
   mysheetlist.getRange("C2:C").clear();
   
-  //ETAPE II : Extraction progressive des noms des user et calcul des formules
-  //Préciser dans la feuille active le nom de la feuille   
+  //Name of the sheet and tab  
   var document       = SpreadsheetApp.getActive();
   var sheet          = document.getSheetByName("ACCOUNTS TO STUDY");
   
-  //Supprimer des contenus dans le fichier
+  //Delete content on sheet
   sheet.getRange("A2:B").clear();
   
   var pageToken;
   var page, dataToInsert = [];
   do 
-    {
-    //Lister les profils du domaine
+     {
     page = AdminDirectory.Users.list
          (
          {
-          //Préciser le nom du domaine 
+          //Primary Domain Name 
           domain: 'decathlon.com',
-          //Préciser l'ordre de classement des données
+          //Ordered by ...
           orderBy: 'givenName',
           pageToken: pageToken
          }
          );
-         //Variable de la liste des comptes 
          var users     = page.users;
-           //Variable de la liste des comptes
            if (users) 
             {
             //Boucle d'écriture de la liste
             for (var i = 0; i < users.length; i++) 
                 {
                  var user = users[i];
-                 //Critère de recherche
+                 //add on sheet if user is suspended
                   if (user.suspended)
                    {
-                     // cumule dans la liste des user et de leur email principal   
+                     //process completely before writing on sheets aiming at optimization regarding timed out script   
                      dataToInsert.push([user.primaryEmail,user.orgUnitPath]);
                    } 
                 }
