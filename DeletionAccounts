@@ -1,30 +1,30 @@
 function STEP4_PACMAN_JOB(){  
     
-  //Préciser dans la feuille active le nom de la feuille et des onglets 
+  //Specify in the active sheet the name of the sheet and the tabs 
   var document         = SpreadsheetApp.getActive();
   var mysheetlist      = document.getSheetByName("DELETION PROCESSING LIST"); 
     
-  //Supprimer des contenus dans le fichier
+  //Delete contents in the file
   mysheetlist.getRange("C3:C").clearContent();  
   
-  //Définition de la liste des comptes a supprimer
+  //Definition of the accounts to delete list
   var myContact      = mysheetlist.getDataRange().getValues();
 
-  //Boucle d'extraction des comptes
+  //Extraction loop of the accounts
   for (i=1; i < myContact.length; i++) 
   {var personPositif = myContact[i];
     
-    //Condition de suppression des comptes
+    //Deletion Condition of the accounts
     if (personPositif[0] != "" && (personPositif[0]=="andrea.latini@decathlon.com" || personPositif[0]=="allan.cadet@decathlon.com")) 
     {
        
-      //Extraire les mobiles registered des users
+      //Extract users registered mobiles
       var responseapi      = AdminReports.Activities.list(personPositif[0], 'mobile',{ eventName: "DEVICE_REGISTER_UNREGISTER_EVENT",  maxResults: 1000 });
       
-      //Logger : mobiles registered des users
+      //Logger : users registered mobiles
       for (i=0; i < responseapi['items'].length; i++) 
       {
-        //Suppression des comptes 
+        //Deletion of the accounts 
         Logger.log(personPositif[0])
         Logger.log(responseapi['items'][i]['events'][0]['parameters'][5]['value']);
         var actionapi      = AdminDirectory.Mobiledevices.action(
@@ -38,10 +38,10 @@ function STEP4_PACMAN_JOB(){
       mysheetlist.getRange(i+1,3).setValue("Yes");
     }
   }
-  //Email archivage
+  //Email archiving
   GmailApp.sendEmail("collaborative.tools@decathlon.com", "Suppression de comptes SUSPENDED effectué",personPositif[0]);
   
-  //Message Box de succès
+  //Success Box message 
   Browser.msgBox("DELETION COMPLETED", "Tous les comptes ont bien été supprimé.", Browser.Buttons.OK);
   return; 
 }
