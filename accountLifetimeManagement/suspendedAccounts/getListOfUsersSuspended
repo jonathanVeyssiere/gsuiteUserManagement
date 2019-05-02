@@ -1,15 +1,8 @@
 function STEP2_PACMAN_SUSPENDED_EXTRACT(){  
-  
-  //Name of the sheet and tab
-  var document         = SpreadsheetApp.getActive();
-  var mysheetlist      = document.getSheetByName("DELETION PROCESSING LIST");
-  
-  //Delete content on sheet
-  mysheetlist.getRange("C2:C").clear();
-  
+    
   //Name of the sheet and tab  
   var document       = SpreadsheetApp.getActive();
-  var sheet          = document.getSheetByName("ACCOUNTS TO STUDY");
+  var sheet          = document.getSheetByName("YOUR TAB NAME");
   
   //Delete content on sheet
   sheet.getRange("A2:B").clear();
@@ -22,7 +15,7 @@ function STEP2_PACMAN_SUSPENDED_EXTRACT(){
          (
          {
           //Primary Domain Name 
-          domain: 'decathlon.com',
+          domain: 'yourDomain.com',
           //Ordered by ...
           orderBy: 'givenName',
           pageToken: pageToken
@@ -38,7 +31,7 @@ function STEP2_PACMAN_SUSPENDED_EXTRACT(){
                  //add on sheet if user is suspended
                   if (user.suspended)
                    {
-                     //process completely before writing on sheets aiming at optimization regarding timed out script   
+                     //process completely before writing on sheet aiming at optimizing regarding timed out script time   
                      dataToInsert.push([user.primaryEmail,user.orgUnitPath]);
                    } 
                 }
