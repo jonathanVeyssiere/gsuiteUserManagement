@@ -25,23 +25,21 @@ function STEP4_PACMAN_JOB(){
       for (i=0; i < responseapi['items'].length; i++) 
       {
         //Deletion of the accounts 
-        Logger.log(personPositif[0])
-        Logger.log(responseapi['items'][i]['events'][0]['parameters'][5]['value']);
         var actionapi      = AdminDirectory.Mobiledevices.action(
           personPositif[0], 
           responseapi['items'][i]['events'][0]['parameters'][5]['value'], 
           { action: "admin_account_wipe" });
       }
       
-      //AdminDirectory.Users.remove(personPositif[0]);
-      //Fonction de marque de succès de la tâche de suppression
+      AdminDirectory.Users.remove(personPositif[0]);
+      //Deletion well done indicated on Google Sheet
       mysheetlist.getRange(i+1,3).setValue("Yes");
     }
   }
   //Email archiving
-  GmailApp.sendEmail("collaborative.tools@decathlon.com", "Suppression de comptes SUSPENDED effectué",personPositif[0]);
+  GmailApp.sendEmail("my_email_adress@my_domain.com", "Accounts deletion well done",personPositif[0]);
   
   //Success Box message 
-  Browser.msgBox("DELETION COMPLETED", "Tous les comptes ont bien été supprimé.", Browser.Buttons.OK);
+  Browser.msgBox("DELETION COMPLETED", "All accounts were well deleted.", Browser.Buttons.OK);
   return; 
 }
