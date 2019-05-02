@@ -15,7 +15,7 @@ function STEP4_PACMAN_JOB(){
   {var personPositif = myContact[i];
     
     //Deletion Condition of the accounts
-    if (personPositif[0] != "" && (personPositif[0]=="andrea.latini@decathlon.com" || personPositif[0]=="allan.cadet@decathlon.com")) 
+    if (personPositif[0] != "") 
     {
        
       //Extract users registered mobiles
