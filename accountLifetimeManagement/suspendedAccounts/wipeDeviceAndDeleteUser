@@ -1,4 +1,4 @@
-function STEP4_PACMAN_JOB(){  
+function AccountDeletionAndWipeDeviceAccount(){  
     
   var document         = SpreadsheetApp.getActive();
   var mysheetlist      = document.getSheetByName("DELETION PROCESSING LIST"); 
