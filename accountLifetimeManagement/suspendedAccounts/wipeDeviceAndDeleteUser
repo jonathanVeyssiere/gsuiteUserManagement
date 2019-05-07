@@ -50,7 +50,7 @@ function STEP4_PACMAN_JOB(){
       mysheetlist.getRange(i+1,3).setValue("Yes");
     }
   }
-  GmailApp.sendEmail("your email box", "Suppression de comptes SUSPENDED effectué",userEmail);
-  Browser.msgBox("DELETION COMPLETED", "Tous les comptes ont bien été supprimé.", Browser.Buttons.OK);
+  GmailApp.sendEmail("your email box", "Deletion of suspended account well done",userEmail);
+  Browser.msgBox("DELETION COMPLETED", "All targeted suspended account were well deleted and devices wiped.", Browser.Buttons.OK);
   return; 
 }
