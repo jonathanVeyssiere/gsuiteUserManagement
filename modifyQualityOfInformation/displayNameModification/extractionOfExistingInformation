@@ -1,0 +1,44 @@
+function extractionOfExistingInformation(){  
+  
+  var document       = SpreadsheetApp.getActive();
+  var sheet          = document.getSheetByName("Correction");
+   
+  var pageToken;
+  var page, dataToInsert = [];
+  do 
+    {
+    page = AdminDirectory.Users.list
+         (
+         {
+          domain: 'domain name',
+          orderBy: 'givenName',
+          pageToken: pageToken
+         }
+         );
+         var users     = page.users;
+           if (users) 
+            {
+            for (var i = 0; i < users.length; i++) 
+                {
+                 var user = users[i]; 
+                     var userName = '';
+                     if (user.name && user.name.familyName) {
+                       userName = user.name.familyName;
+                     }
+                     var userOrganization = '';
+                     if (user.organizations && user.organizations[0] && user.organizations[0].location) {
+                       userOrganization = user.organizations[0].location;
+                     }
+                     dataToInsert.push([user.primaryEmail,userName,userOrganization]);
+               }
+            } 
+           else 
+            {
+             Browser.msgBox("Error", "No users in the domain !", Browser.Buttons.OK);
+             return;
+             }
+             pageToken = page.nextPageToken;
+     } 
+     while (pageToken);
+  sheet.getRange(2, 1, dataToInsert.length, 3).setValues(dataToInsert);
+}
