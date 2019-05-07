@@ -1,45 +1,57 @@
 function STEP4_PACMAN_JOB(){  
     
-  //Specify in the active sheet the name of the sheet and the tabs 
   var document         = SpreadsheetApp.getActive();
   var mysheetlist      = document.getSheetByName("DELETION PROCESSING LIST"); 
     
-  //Delete contents in the file
   mysheetlist.getRange("C3:C").clearContent();  
   
-  //Definition of the accounts to delete list
   var myContact      = mysheetlist.getDataRange().getValues();
+  var url = 'https://www.googleapis.com/admin/directory/v1/customer/customerId/devices/mobile/resourceId/action';
+  var baseUrl = 'https://www.googleapis.com/admin/directory/v1/customer/my_customer/devices/mobile/';
+  var  params = {
+      'method': 'POST',
+      "headers": {
+        "Authorization": "Bearer "+ ScriptApp.getOAuthToken(),
+        'Accept': 'application/json',
+        "Content-type" : "application/json"
+      },
+      'payload': JSON.stringify({
+        'action': "admin_account_wipe"
+      })
+    };
+  var events, items;
 
-  //Extraction loop of the accounts
-  for (i=1; i < myContact.length; i++) 
-  {var personPositif = myContact[i];
-    
-    //Deletion Condition of the accounts
-    if (personPositif[0] != "") 
+  for (i=0; i < myContact.length; i++) 
+  {
+    var userEmail = myContact[i][0];
+    if (userEmail != "") 
     {
-       
-      //Extract users registered mobiles
-      var responseapi      = AdminReports.Activities.list(personPositif[0], 'mobile',{ eventName: "DEVICE_REGISTER_UNREGISTER_EVENT",  maxResults: 1000 });
-      
-      //Logger : users registered mobiles
-      for (i=0; i < responseapi['items'].length; i++) 
-      {
-        //Deletion of the accounts 
-        var actionapi      = AdminDirectory.Mobiledevices.action(
-          personPositif[0], 
-          responseapi['items'][i]['events'][0]['parameters'][5]['value'], 
-          { action: "admin_account_wipe" });
+      try {
+        var responseapi = AdminReports.Activities.list(userEmail, 'mobile',{ eventName: "DEVICE_REGISTER_UNREGISTER_EVENT",  maxResults: 1000 });
+      } catch (error) {
+        continue;
       }
-      
-      AdminDirectory.Users.remove(personPositif[0]);
-      //Deletion well done indicated on Google Sheet
+      items = responseapi['items'] || [];
+      for (j=0; j < items.length; j++) 
+      {
+        events = items[j]['events'] || [];
+        for (k=0; k < events.length; k++) 
+        {
+          (events[k]['parameters'] || []).forEach(
+          function (json) {
+            if (json.name === 'RESOURCE_ID') {
+              // Deletion of the account
+              url = baseUrl + json.value + '/action';
+              UrlFetchApp.fetch(url, params);
+            }
+          });
+        }
+      }
+      AdminDirectory.Users.remove(userEmail);
       mysheetlist.getRange(i+1,3).setValue("Yes");
     }
   }
-  //Email archiving
-  GmailApp.sendEmail("my_email_adress@my_domain.com", "Accounts deletion well done",personPositif[0]);
-  
-  //Success Box message 
-  Browser.msgBox("DELETION COMPLETED", "All accounts were well deleted.", Browser.Buttons.OK);
+  GmailApp.sendEmail("collaborative.tools@decathlon.com", "Suppression de comptes SUSPENDED effectué",userEmail);
+  Browser.msgBox("DELETION COMPLETED", "Tous les comptes ont bien été supprimé.", Browser.Buttons.OK);
   return; 
 }
