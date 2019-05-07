@@ -1,0 +1,30 @@
+function modifyNameOfUsers(){    
+
+  var document       = SpreadsheetApp.getActive();
+  var sheet          = document.getSheetByName("Modification");
+  var range = sheet.getDataRange();
+  var values = range.getValues();
+  var textMail = "Rapport de succès \n";
+  var textMailErrors = "\n\nRapport d'erreurs \n";
+  
+  for (var i = 0; i < values.length; i++) {
+    var line = values[i];
+    var email = line[0], newName = line[1];
+    try {
+      var user = AdminDirectory.Users.get(email);
+      user.name.familyName = newName;
+      AdminDirectory.Users.update(JSON.stringify(user), email);
+      textMail += '\n';
+      textMail = textMail + line[0] + ' : ' + line[1] + '\n';
+    } catch (error) {
+     textMailErrors += '\n';
+     textMailErrors = textMailErrors + line[0] + ' : ' + line[0] +  '\n';
+     textMailErrors = textMailErrors + error + '\n';
+    }
+  }
+  textMail = textMail + '\n' + textMailErrors; 
+ 
+ var today = new Date();
+ var title = "Activity report on Display Name modification - "+today;
+ GmailApp.sendEmail("your mailbox", title, textMail);
+}
