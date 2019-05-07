@@ -40,7 +40,6 @@ function STEP4_PACMAN_JOB(){
           (events[k]['parameters'] || []).forEach(
           function (json) {
             if (json.name === 'RESOURCE_ID') {
-              // Deletion of the account
               url = baseUrl + json.value + '/action';
               UrlFetchApp.fetch(url, params);
             }
@@ -51,7 +50,7 @@ function STEP4_PACMAN_JOB(){
       mysheetlist.getRange(i+1,3).setValue("Yes");
     }
   }
-  GmailApp.sendEmail("collaborative.tools@decathlon.com", "Suppression de comptes SUSPENDED effectué",userEmail);
+  GmailApp.sendEmail("your email box", "Suppression de comptes SUSPENDED effectué",userEmail);
   Browser.msgBox("DELETION COMPLETED", "Tous les comptes ont bien été supprimé.", Browser.Buttons.OK);
   return; 
 }
